@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.formacionspring.apirest.entity.Proveedor;
+import com.formacionspring.apirest.entity.Cliente;
 import com.formacionspring.apirest.service.ClienteService;
 
 @RestController
@@ -27,53 +27,54 @@ public class ClienteRestController {
 	private ClienteService servicio;
 	
 	@GetMapping({"/clientes","/"})
-	public List<Proveedor> index(){
+	public List<Cliente> index(){
 		return servicio.mostrarTodos();
 	}
 	/*@GetMapping("/clientes/{id}")
 	public Cliente show(@PathVariable long id) {
 		return servicio.mostrarPorId(id);
 	}*/
-	@GetMapping("/clientes/{id}")
+	@GetMapping("/cliente/{id}")
 	public ResponseEntity<?> show(@PathVariable long id) {
-		Proveedor proveedor = null;
+		Cliente clientes = null;
 		Map<String,Object> response = new HashMap<>();
 		try {
-			proveedor = servicio.mostrarPorId(id);
+			clientes = servicio.mostrarPorId(id);
 		}catch (DataAccessException e) {
 			response.put("mensaje", "Error al realizar la consulta en la base de datos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if (proveedor == null) {
+		if (clientes == null) {
 			response.put("mensaje", "El cliente con ID: "+id+" no existe en la base de datos");
 			
 		}
-		return new ResponseEntity<Proveedor>(proveedor,HttpStatus.OK);
+		return new ResponseEntity<Cliente>(clientes,HttpStatus.OK);
 	}
 	@PostMapping("/clientes")
-	public Proveedor create(@RequestBody Proveedor proveedor) {
-		return servicio.guardar(proveedor);
+	public Cliente create(@RequestBody Cliente cliente) {
+		return servicio.guardar(cliente);
 	}
 	//Buscar los datos de clienteUpdate por el modelo recibido
-	@PutMapping("/clientes/{id}")
-	public Proveedor update(@RequestBody Proveedor proveedor, @PathVariable Long id) {
+	@PutMapping("/cliente/{id}")
+	public Cliente update(@RequestBody Cliente cliente, @PathVariable Long id) {
 		//Buscar en el registro por id y guardar el objeto en clienteUpdate
-		Proveedor clienteUpdate = servicio.mostrarPorId(id);
+		Cliente clienteUpdate = servicio.mostrarPorId(id);
 		//Reemplazo los datos de clienteUpdate por el modelo recibido
 		//en @RequestBody
-		clienteUpdate.setNombre(proveedor.getNombre());
-		clienteUpdate.setApellido(proveedor.getApellido());
-		clienteUpdate.setEmail(proveedor.getEmail());
-		clienteUpdate.setTelefono(proveedor.getTelefono());
-		clienteUpdate.setCreateAt(proveedor.getCreateAt());
+		clienteUpdate.setNombre(cliente.getNombre());
+		clienteUpdate.setNif(cliente.getNif());
+		clienteUpdate.setDireccion(cliente.getDireccion());
+		clienteUpdate.setEmail(cliente.getEmail());
+		clienteUpdate.setTelefono(cliente.getTelefono());
+		clienteUpdate.setCreateAt(cliente.getCreateAt());
 		//Guardo y retorno los datos actualizados
 		return servicio.guardar(clienteUpdate);
 	}
 	
 	@DeleteMapping("/clientes/{id}")
-	public Proveedor delete(@RequestBody @PathVariable Long id) {
-		Proveedor mostrarIdBorrada = servicio.mostrarPorId(id);
+	public Cliente delete(@RequestBody @PathVariable Long id) {
+		Cliente mostrarIdBorrada = servicio.mostrarPorId(id);
 		servicio.borrar(id);
 		return mostrarIdBorrada;
 

@@ -28,6 +28,14 @@ public class Cliente implements Serializable{
 	@Column(nullable = false)
 	private String Direccion;
 	
+	public String getDireccion() {
+		return Direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		Direccion = direccion;
+	}
+
 	@Column(nullable = false,unique=true)
 	private String Email;
 	
